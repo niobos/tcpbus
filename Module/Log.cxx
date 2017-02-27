@@ -28,22 +28,36 @@ Log::Log(std::string params) :
 Log::~Log() {
 }
 
-void Log::new_connection(const SockAddr::SockAddr &addr) {
+void Log::new_connection(
+	int id,
+	const SockAddr::SockAddr &addr
+) {
 	if( ! m_log_nc ) return;
 	std::cout << timestamp() << " " << addr.string() << " NewCon " << "\n";
 }
 
-void Log::disconnect(const SockAddr::SockAddr &addr) {
+void Log::disconnect(
+	int id,
+	const SockAddr::SockAddr &addr
+) {
 	if( ! m_log_disc ) return;
 	std::cout << timestamp() << " " << addr.string() << " Close " << "\n";
 }
 
-void Log::error(const SockAddr::SockAddr &addr, const Errno &e) {
+void Log::error(
+	int id,
+	const SockAddr::SockAddr &addr,
+	const Errno &e
+) {
 	if( ! m_log_error ) return;
 	std::cout << timestamp() << " " << addr.string() << " Error " << " " << e.error_number() << " " << e.what() << "\n";
 }
 
-void Log::rx_data(const SockAddr::SockAddr &addr, std::vector< std::string > &msg) {
+void Log::rx_data(
+	int id,
+	const SockAddr::SockAddr &addr,
+	std::vector< std::string > &msg
+) {
 	if( ! m_log_rx ) return;
 	std::string now( timestamp() );
 	for(auto i = msg.begin(); i != msg.end(); i++) {
@@ -55,7 +69,13 @@ void Log::rx_data(const SockAddr::SockAddr &addr, std::vector< std::string > &ms
 	}
 }
 
-void Log::tx_data(const SockAddr::SockAddr &src, const SockAddr::SockAddr &dst, std::vector< std::string > &msg) {
+void Log::tx_data(
+	int srcid,
+	int dstid,
+	const SockAddr::SockAddr &src,
+	const SockAddr::SockAddr &dst,
+	std::vector< std::string > &msg
+) {
 	if( ! m_log_tx ) return;
 	std::string now( timestamp() );
 	for(auto i = msg.begin(); i != msg.end(); i++) {

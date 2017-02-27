@@ -19,17 +19,22 @@ public:
 	static std::string timestamp();
 
 	virtual void new_connection(
+		int id,
 		const SockAddr::SockAddr &addr
 	) {}
 	/* A new client has connected to the bus.
+	 * id is a unique id for this connection (valid for the duration of the connection)
+	 * Be sure to watch the disconnect() event to clean up.
 	 */
 
 	virtual void disconnect(
+		int id,
 		const SockAddr::SockAddr &addr
 	) {}
 	/* A client has disconnected from the bus */
 
 	virtual void error(
+		int id,
 		const SockAddr::SockAddr &addr,
 		const Errno &e
 	) {}
@@ -37,6 +42,7 @@ public:
 	 */
 
 	virtual void rx_data(
+		int id,
 		const SockAddr::SockAddr &addr,
 		std::vector< std::string > &msg
 	) {}
@@ -48,7 +54,9 @@ public:
 	 */
 
 	virtual void tx_data(
+		int srcid,
 		const SockAddr::SockAddr &src,
+		int dstid,
 		const SockAddr::SockAddr &dst,
 		std::vector< std::string > &msg
 	) {}

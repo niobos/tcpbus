@@ -15,24 +15,30 @@ public:
 	virtual ~Log();
 
 	virtual void new_connection(
+		int id,
 		const SockAddr::SockAddr &addr
 	);
 
 	virtual void disconnect(
+		int id,
 		const SockAddr::SockAddr &addr
 	);
 
 	virtual void error(
+		int id,
 		const SockAddr::SockAddr &addr,
 		const Errno &e
 	);
 
 	virtual void rx_data(
+		int id,
 		const SockAddr::SockAddr &addr,
 		std::vector< std::string > &msg
 	);
 
 	virtual void tx_data(
+		int srcid,
+		int dstid,
 		const SockAddr::SockAddr &src,
 		const SockAddr::SockAddr &dst,
 		std::vector< std::string > &msg

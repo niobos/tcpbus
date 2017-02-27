@@ -55,7 +55,7 @@ void kill_connection(Connection *con) {
 	for(auto c = connections.begin(); c != connections.end(); c++ ) {
 		if( c->get() == con ) {
 			for(auto m = modules.begin(); m != modules.end(); m++) {
-				(**m).disconnect( *con->addr );
+				(**m).disconnect( con->socket, *con->addr );
 			}
 			connections.erase(c);
 			// the destructor of the Connection will close the socket
@@ -77,7 +77,7 @@ void ready_to_read(EV_P_ ev_io *w, int revents) {
 		}
 
 		for(auto i = modules.begin(); i != modules.end(); i++) {
-			(**i).rx_data( *con->addr, data );
+			(**i).rx_data( con->socket, *con->addr, data );
 		}
 
 		for(auto c = connections.begin(); c != connections.end(); c++ ) {
@@ -89,7 +89,7 @@ void ready_to_read(EV_P_ ev_io *w, int revents) {
 			std::vector< std::string > txdata( data ); // copy
 
 			for(auto m = modules.begin(); m != modules.end(); m++) {
-				(**m).tx_data( *con->addr, *(**c).addr, txdata );
+				(**m).tx_data( con->socket, *con->addr, (**c).socket, *(**c).addr, txdata );
 			}
 
 			for(auto s = txdata.begin(); s != txdata.end(); s++ ) {
@@ -99,7 +99,7 @@ void ready_to_read(EV_P_ ev_io *w, int revents) {
 
 	} catch(Errno e) {
 		for(auto i = modules.begin(); i != modules.end(); i++) {
-			(**i).error( *con->addr, e );
+			(**i).error( con->socket, *con->addr, e );
 		}
 		kill_connection(con);
 		return;
@@ -122,7 +122,7 @@ void incomming_connection(EV_P_ ev_io *w, int revents) {
 	}
 
 	for(auto i = modules.begin(); i != modules.end(); i++) {
-		(**i).new_connection( *c->addr );
+		(**i).new_connection( c->socket, *c->addr );
 	}
 
 	ev_io_init( &c->read_ready, ready_to_read, c->socket, EV_READ);

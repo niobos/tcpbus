@@ -22,7 +22,11 @@ Velbus::Velbus(std::string params) {
 Velbus::~Velbus() {
 }
 
-void Velbus::rx_data(const SockAddr::SockAddr &addr, std::vector< std::string > &msg) {
+void Velbus::rx_data(
+	int id,
+	const SockAddr::SockAddr &addr,
+	std::vector< std::string > &msg
+) {
 	// Join messages in to 1 string
 	std::string d;
 	for( auto i = msg.begin(); i != msg.end(); i++ ) {

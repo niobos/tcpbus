@@ -12,6 +12,7 @@ public:
 	virtual ~Velbus();
 
 	virtual void rx_data(
+		int id,
 		const SockAddr::SockAddr &addr,
 		std::vector< std::string > &msg
 	);
