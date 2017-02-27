@@ -32,20 +32,20 @@ Socket s_listen;
 
 class Connection {
 public:
-	Socket socket;
-	std::unique_ptr<SockAddr::SockAddr> addr;
-	ev_io read_ready;
-
-	Connection() {};
-	~Connection() {
+        Connection() {}
+        ~Connection() {
 		ev_io_stop(EV_DEFAULT_ &read_ready);
 	}
 
-	/* ev_io structure should not have its address changed: prevent moving/copying: */
-	Connection(const Connection &copy) =delete;
-	Connection(Connection &&move) =delete;
-	Connection& operator =(const Connection &copy) =delete;
-	Connection& operator =(Connection &&move) =delete;
+        /* ev_io structure should not have its address changed: prevent moving/copying: */
+        Connection(const Connection &copy) =delete;
+        Connection(Connection &&move) =delete;
+        Connection& operator =(const Connection &copy) =delete;
+        Connection& operator =(Connection &&move) =delete;
+
+        Socket socket;
+        std::unique_ptr<SockAddr::SockAddr> addr;
+        ev_io read_ready;
 };
 std::list< std::unique_ptr<Connection> > connections;
 
