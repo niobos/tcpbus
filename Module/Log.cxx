@@ -63,7 +63,7 @@ void Log::rx_data(
 	for(auto i = msg.begin(); i != msg.end(); i++) {
 		std::cout << now << " " << addr.string() << " Rx";
 		for(size_t j = 0; j < i->length(); j++) {
-			std::cout << " " << std::hex << std::setfill('0') << std::setw(2) << (int)i->at(j);
+			std::cout << " " << std::hex << std::setfill('0') << std::setw(2) << (i->at(j)&0xff);
 		}
 		std::cout << "\n";
 	}
@@ -81,7 +81,7 @@ void Log::tx_data(
 	for(auto i = msg.begin(); i != msg.end(); i++) {
 		std::cout << now << " " << dst.string() << " Tx";
 		for(size_t j = 0; j < i->length(); j++) {
-			std::cout << " " << std::hex << std::setfill('0') << std::setw(2) << (int)i->at(j);
+			std::cout << " " << std::hex << std::setfill('0') << std::setw(2) << (i->at(j)&0xff);
 		}
 		std::cout << "\n";
 	}
