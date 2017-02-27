@@ -12,8 +12,11 @@ namespace Module {
 /* interface */ class Module {
 protected:
 	Module() {}
+
 public:
 	virtual ~Module() {}
+
+	static std::string timestamp();
 
 	virtual void new_connection(
 		const SockAddr::SockAddr &addr

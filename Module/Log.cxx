@@ -1,8 +1,6 @@
 #include "Log.hxx"
 
 #include <iostream>
-#include <sys/time.h>
-#include <sstream>
 #include <iomanip>
 
 namespace Module {
@@ -28,15 +26,6 @@ Log::Log(std::string params) :
 }
 
 Log::~Log() {
-}
-
-std::string timestamp() {
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	std::ostringstream o;
-	o << tv.tv_sec << "."
-	  << std::setfill('0') << std::setw(6) << tv.tv_usec;
-	return o.str();
 }
 
 void Log::new_connection(const SockAddr::SockAddr &addr) {
