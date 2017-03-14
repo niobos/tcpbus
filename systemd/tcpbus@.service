@@ -1,0 +1,10 @@
+[Unit]
+Description=TCP bus
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/tcp-bus -b "[::]:%i"
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
