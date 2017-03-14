@@ -39,4 +39,8 @@ target_link_libraries(tcpbus ${CMAKE_DL_LIBS} -rdynamic) # dynamic linking suppo
 # -rdynamic exposes global symbols toward libraries (Registy's)
 target_link_libraries(tcpbus ${LIBEV_LIBRARIES})
 
+install(TARGETS tcpbus
+        RUNTIME DESTINATION bin
+)
+
 add_subdirectory("test")

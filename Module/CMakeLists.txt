@@ -9,3 +9,5 @@ add_library(Modules OBJECT Module.cxx Log.cxx)
 
 add_library(velbus MODULE Velbus.cxx)
 set_target_properties(velbus PROPERTIES PREFIX "")
+
+install(FILES velbus.pl DESTINATION lib/tcpbus)
