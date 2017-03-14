@@ -33,7 +33,7 @@ void Log::new_connection(
 	const SockAddr::SockAddr &addr
 ) {
 	if( ! m_log_nc ) return;
-	std::cout << timestamp() << " " << addr.string() << " NewCon " << "\n";
+	std::cout << timestamp() << " " << addr.string() << " NewCon " << "\n" << std::flush;
 }
 
 void Log::disconnect(
@@ -41,7 +41,7 @@ void Log::disconnect(
 	const SockAddr::SockAddr &addr
 ) {
 	if( ! m_log_disc ) return;
-	std::cout << timestamp() << " " << addr.string() << " Close " << "\n";
+	std::cout << timestamp() << " " << addr.string() << " Close " << "\n" << std::flush;
 }
 
 void Log::error(
@@ -50,7 +50,7 @@ void Log::error(
 	const Errno &e
 ) {
 	if( ! m_log_error ) return;
-	std::cout << timestamp() << " " << addr.string() << " Error " << " " << e.error_number() << " " << e.what() << "\n";
+	std::cout << timestamp() << " " << addr.string() << " Error " << " " << e.error_number() << " " << e.what() << "\n" << std::flush;
 }
 
 void Log::rx_data(
@@ -65,7 +65,7 @@ void Log::rx_data(
 		for(size_t j = 0; j < i->length(); j++) {
 			std::cout << " " << std::hex << std::setfill('0') << std::setw(2) << (i->at(j)&0xff);
 		}
-		std::cout << "\n";
+		std::cout << "\n" << std::flush;
 	}
 }
 
@@ -83,7 +83,7 @@ void Log::tx_data(
 		for(size_t j = 0; j < i->length(); j++) {
 			std::cout << " " << std::hex << std::setfill('0') << std::setw(2) << (i->at(j)&0xff);
 		}
-		std::cout << "\n";
+		std::cout << "\n" << std::flush;
 	}
 }
 
