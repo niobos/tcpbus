@@ -66,9 +66,14 @@ public:
 	 */
 };
 
-typedef ::Registry< std::string, Module*(*)(std::string) > ModuleRegistry;
+struct ModuleInfo {
+	Module* (*factory)(std::string);
+	void (*usage)(std::ostream&);
+};
+
+typedef ::Registry< std::string, struct ModuleInfo > ModuleRegistry;
 
 }
 
 /* Don't instanciate these (by default), this would create multiple singletons */
-extern template class ::Registry< std::string, Module::Module*(*)(std::string) >;
+extern template class ::Registry< std::string, struct ModuleInfo >;

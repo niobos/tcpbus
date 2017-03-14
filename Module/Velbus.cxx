@@ -7,13 +7,20 @@ namespace Module {
 class VelbusRegistrant {
 public:
 	VelbusRegistrant() {
-		ModuleRegistry::get_instance().add("velbus", &Velbus::factory_method);
+		struct ModuleInfo mi = {
+			.factory = &Velbus::factory_method,
+			.usage = &Velbus::usage,
+		};
+		ModuleRegistry::get_instance().add("velbus", mi);
 		std::cout << "Registered module `velbus`\n";
 	}
 };
 extern "C" {
 	/* auto-constructed when this compilation unit is loaded */
 	VelbusRegistrant DummyName;
+}
+
+void Velbus::usage(std::ostream& out) {
 }
 
 Velbus::Velbus(std::string params) {

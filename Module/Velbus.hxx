@@ -18,6 +18,8 @@ public:
 	Velbus(std::string params);
 	static Module* factory_method(std::string params) { return new Velbus(params); }
 
+	static void usage(std::ostream& out);
+
 	virtual ~Velbus();
 
 	virtual void rx_data(

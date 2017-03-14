@@ -13,6 +13,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+#include <iostream>
 #include <vector>
 #include <list>
 #include <memory>
@@ -170,7 +171,7 @@ int main(int argc, char* argv[]) {
 			switch(opt) {
 			case 'h':
 			case '?':
-				fprintf(stderr,
+				std::cerr <<
 				//	>---------------------- Standard terminal width ---------------------------------<
 					"Options:\n"
 					"  -h, --help                      Displays this help message and exits\n"
@@ -186,11 +187,12 @@ int main(int argc, char* argv[]) {
 					"                                 Configure the given module and hook them in\n"
 					"\n"
 					"Current available modules:\n"
-				);
+				;
 				{
 					auto l = Module::ModuleRegistry::get_instance().get_list();
 					for( auto i = l.begin(); i != l.end(); i++ ) {
-						fprintf(stderr, "  %s\n", i->c_str());
+						std::cerr << "  " << *i << "\n";
+						Module::ModuleRegistry::get_instance().get(*i).usage(std::cerr);
 					}
 				}
 
@@ -247,7 +249,7 @@ int main(int argc, char* argv[]) {
 					mod = mod.substr(0, p);
 				}
 				modules.push_back( std::unique_ptr<Module::Module>(
-					Module::ModuleRegistry::get_instance().get(mod)(conf)
+					Module::ModuleRegistry::get_instance().get(mod).factory(conf)
 				) );
 				break;
 			}

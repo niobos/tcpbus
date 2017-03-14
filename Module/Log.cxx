@@ -8,13 +8,21 @@ namespace Module {
 class LogRegistrant {
 public:
 	LogRegistrant() {
-		ModuleRegistry::get_instance().add("log", &Log::factory_method);
+		struct ModuleInfo mi = {
+			.factory = &Log::factory_method,
+			.usage = &Log::usage,
+		};
+		ModuleRegistry::get_instance().add("log", mi);
 		std::cout << "Registered module `log`\n";
 	}
 };
 extern "C" {
 	/* auto-constructed when this compilation unit is loaded */
 	LogRegistrant DummyName;
+}
+
+void Log::usage(std::ostream &out) {
+	out << "file=<filename>\n";
 }
 
 Log::Log(std::string params) :

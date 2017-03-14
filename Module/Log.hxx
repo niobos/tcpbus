@@ -12,6 +12,8 @@ public:
 	Log(std::string params);
 	static Module* factory_method(std::string params) { return new Log(params); }
 
+	static void usage(std::ostream &out);
+
 	virtual ~Log();
 
 	virtual void new_connection(

@@ -5,7 +5,7 @@
 #include <iomanip>
 
 /* Explicit instanciation */
-template class ::Registry< std::string, Module::Module*(*)(std::string) >;
+template class ::Registry< std::string, struct Module::ModuleInfo >;
 
 namespace Module {
 
