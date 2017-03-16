@@ -1,7 +1,7 @@
 #include "Log.hxx"
 
-#include <iostream>
 #include <iomanip>
+#include <sstream>
 
 namespace Module {
 
@@ -27,13 +27,43 @@ void Log::usage(std::ostream &out) {
 
 Log::Log(std::string params) :
 	m_log_nc(true), m_log_disc(true), m_log_error(true),
-	m_log_tx(false), m_log_rx(true)
+	m_log_tx(false), m_log_rx(true),
+	m_output( nullptr )
 {
+	m_output.rdbuf( std::cout.rdbuf() );
+
+	while( params.length() ) {
+		size_t i = params.find_first_of("=:"); // npos if not found
+		std::string key = params.substr(0, i); // npos copies till end of string
+		params.erase(0, i); // npos erases entire string
+		std::string value;
+		if( params[0] == '=' ) {
+			i = params.find_first_of(":");
+			value = params.substr(1, i); // skip the '='
+			params.erase(0, i);
+		}
+		
+		if( key.compare("file") == 0 ) {
+			this->reopen_file(value);
+		} else {
+			std::cerr << "log: Ignored unrecognized option: " << key << "\n";
+		}
+	}
 	// TODO: parse params to activate/deactivate logs
-	// Maybe output to file?
 }
 
 Log::~Log() {
+}
+
+void Log::sighup() {
+	reopen_file(m_filename);
+}
+
+void Log::reopen_file(const std::string &filename) {
+	m_filename = filename;
+	m_outfile.close();
+	m_outfile.open(m_filename, std::ofstream::out | std::ofstream::app);
+	m_output.rdbuf( m_outfile.rdbuf() );
 }
 
 void Log::new_connection(
@@ -41,7 +71,7 @@ void Log::new_connection(
 	const SockAddr::SockAddr &addr
 ) {
 	if( ! m_log_nc ) return;
-	std::cout << timestamp() << " " << addr.string() << " NewCon " << "\n" << std::flush;
+	m_output << timestamp() << " " << addr.string() << " NewCon " << "\n" << std::flush;
 }
 
 void Log::disconnect(
@@ -49,7 +79,7 @@ void Log::disconnect(
 	const SockAddr::SockAddr &addr
 ) {
 	if( ! m_log_disc ) return;
-	std::cout << timestamp() << " " << addr.string() << " Close " << "\n" << std::flush;
+	m_output << timestamp() << " " << addr.string() << " Close " << "\n" << std::flush;
 }
 
 void Log::error(
@@ -58,7 +88,7 @@ void Log::error(
 	const Errno &e
 ) {
 	if( ! m_log_error ) return;
-	std::cout << timestamp() << " " << addr.string() << " Error " << " " << e.error_number() << " " << e.what() << "\n" << std::flush;
+	m_output << timestamp() << " " << addr.string() << " Error " << " " << e.error_number() << " " << e.what() << "\n" << std::flush;
 }
 
 void Log::rx_data(
@@ -69,11 +99,11 @@ void Log::rx_data(
 	if( ! m_log_rx ) return;
 	std::string now( timestamp() );
 	for(auto i = msg.begin(); i != msg.end(); i++) {
-		std::cout << now << " " << addr.string() << " Rx";
+		m_output << now << " " << addr.string() << " Rx";
 		for(size_t j = 0; j < i->length(); j++) {
-			std::cout << " " << std::hex << std::setfill('0') << std::setw(2) << (i->at(j)&0xff);
+			m_output << " " << std::hex << std::setfill('0') << std::setw(2) << (i->at(j)&0xff);
 		}
-		std::cout << "\n" << std::flush;
+		m_output << "\n" << std::flush;
 	}
 }
 
@@ -87,11 +117,11 @@ void Log::tx_data(
 	if( ! m_log_tx ) return;
 	std::string now( timestamp() );
 	for(auto i = msg.begin(); i != msg.end(); i++) {
-		std::cout << now << " " << dst.string() << " Tx";
+		m_output << now << " " << dst.string() << " Tx";
 		for(size_t j = 0; j < i->length(); j++) {
-			std::cout << " " << std::hex << std::setfill('0') << std::setw(2) << (i->at(j)&0xff);
+			m_output << " " << std::hex << std::setfill('0') << std::setw(2) << (i->at(j)&0xff);
 		}
-		std::cout << "\n" << std::flush;
+		m_output << "\n" << std::flush;
 	}
 }
 
