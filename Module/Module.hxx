@@ -16,6 +16,9 @@ protected:
 public:
 	virtual ~Module() {}
 
+	virtual void sighup() {}
+	/* Signal handlers */
+
 	static std::string timestamp();
 
 	virtual void new_connection(
@@ -68,7 +71,10 @@ public:
 
 struct ModuleInfo {
 	Module* (*factory)(std::string);
+	/* Factory method. Usually just a wrapped constructor */
+
 	void (*usage)(std::ostream&);
+	/* Output usage string to the given ostream */
 };
 
 typedef ::Registry< std::string, struct ModuleInfo > ModuleRegistry;

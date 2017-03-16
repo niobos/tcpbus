@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 ExecStart=/usr/local/bin/tcp-bus -b "[::]:%i"
+ExecReload=/bin/kill -HUP $MAINPID
 Restart=always
 
 [Install]

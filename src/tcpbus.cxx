@@ -20,15 +20,6 @@
 
 static const int MAX_CONN_BACKLOG = 32;
 
-void received_sigint(EV_P_ ev_signal *w, int revents) {
-	fprintf(stderr, "Received SIGINT, exiting\n");
-	ev_break(EV_A_ EVUNLOOP_ALL);
-}
-void received_sigterm(EV_P_ ev_signal *w, int revents) {
-	fprintf(stderr, "Received SIGTERM, exiting\n");
-	ev_break(EV_A_ EVUNLOOP_ALL);
-}
-
 Socket s_listen;
 
 class Connection {
@@ -51,6 +42,21 @@ public:
 std::list< std::unique_ptr<Connection> > connections;
 
 std::vector< std::unique_ptr<Module::Module> > modules;
+
+void received_sigint(EV_P_ ev_signal *w, int revents) {
+	fprintf(stderr, "Received SIGINT, exiting\n");
+	ev_break(EV_A_ EVUNLOOP_ALL);
+}
+void received_sigterm(EV_P_ ev_signal *w, int revents) {
+	fprintf(stderr, "Received SIGTERM, exiting\n");
+	ev_break(EV_A_ EVUNLOOP_ALL);
+}
+void received_sighup(EV_P_ ev_signal *w, int revents) {
+	fprintf(stderr, "Received SIGHUP\n");
+	for(auto m = modules.begin(); m != modules.end(); m++) {
+		(**m).sighup();
+	}
+}
 
 void kill_connection(Connection *con) {
 	for(auto c = connections.begin(); c != connections.end(); c++ ) {
@@ -319,6 +325,10 @@ int main(int argc, char* argv[]) {
 		ev_signal ev_sigterm_watcher;
 		ev_signal_init( &ev_sigterm_watcher, received_sigterm, SIGTERM);
 		ev_signal_start( EV_DEFAULT_ &ev_sigterm_watcher);
+
+		ev_signal ev_sighup_watcher;
+		ev_signal_init( &ev_sighup_watcher, received_sighup, SIGHUP);
+		ev_signal_start( EV_DEFAULT_ &ev_sighup_watcher);
 
 		ev_io ev_listen;
 		ev_io_init(&ev_listen, incomming_connection, s_listen, EV_READ);
